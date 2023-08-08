@@ -1,0 +1,29 @@
+.fullscreen {
+  /* TODO - something different on mobile? */
+  width:50%;
+  height:50%;
+  position:absolute;
+  right:0;
+  top:0;
+}
+
+.overlay {
+  z-index:998;
+}
+
+#cameraSelect {
+  z-index:999;
+  position:absolute;
+}
+
+#closeButton {
+  z-index:999;
+  position:absolute;
+  right:0;
+}
+
+.barcode-polygon {
+  fill:rgba(85,240,40,0.5);          
+  stroke:green;
+  stroke-width:1;
+}
