@@ -10,7 +10,6 @@ const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
 // }
 const files = new Map/*<sha: string, File>*/();
 const filesDiv = document.querySelector('#files');
-const logDiv = document.querySelector('#log');
 
 function newFile(json) {
   const li = document.createElement('li');
@@ -23,6 +22,7 @@ function newFile(json) {
   li.dataset['sha'] = json.sha;
   filesDiv.appendChild(li);
   updateFile(file, json);
+  return file;
 }
 function updateFile(file, json) {
   if (json.f) file.filename = json.f;
@@ -160,12 +160,12 @@ function startDecoding() {
 
 async function decode() {
   if (!decoding) {
-    console.log("decoding");
+    //console.log("decoding");
     var video = document.getElementsByClassName("camera")[0];
     decoding = true;
     var barcodes = await barcodeDetector.detect(video);
     decoding = false;
-    console.log(barcodes);
+    //console.log(barcodes);
     drawOverlay(barcodes);
   }
 }
@@ -197,7 +197,6 @@ function drawOverlay(barcodes) {
 
     try {
       const json = JSON.parse(barcode.rawValue);
-      log.textContent = barcode.rawValue;
       let file = files.get(json.sha);
       if (file) {
         updateFile(file, json);
