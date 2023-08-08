@@ -6,17 +6,19 @@ const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
 //   filename: string
 //   missing: Set<number>
 //   chunks: Array<json>
+//   li: ListItemElement
 // }
 const files = new Map/*<sha: string, File>*/();
 const filesDiv = document.querySelector('#files');
 
 function newFile(json) {
+  const li = document.createElement('li');
   const file = {
     missing: new Set(Array.from({length: json.n}, (_, i) => i)),
     chunks: [],
+    li,
   };
   if (json.f) file.filename = json.f;
-  const li = document.createElement('li');
   li.dataset['sha'] = json.sha;
   filesDiv.appendChild(li);
   updateFile(file, json);
@@ -26,18 +28,17 @@ function updateFile(file, json) {
   if (!file.missing.has(json.i)) return;
   file.missing.delete(json.i);
   file.chunks[json.i] = json;
-  const li = filesDiv.querySelector(`[data-sha="${json.sha}"]`);
-  const name = file.filename || file.sha;
+  const name = file.filename || json.sha || 'no name?';
   if (file.missing.size) {
-    li.textContent = `${name}: ${[...file.missing].join(' ')}`;
+    file.li.textContent = `${name}: ${[...file.missing].join(' ')}`;
   } else {
-    li.innerHTML = '';
+    file.li.innerHTML = '';
     const a = document.createElement('a');
     const data = file.chunks.map(c => c.c || '').join('');
     a.href = `data:text/plain;base64,${btoa(data)}`;
     a.download = name;
     a.textContent = name;
-    li.appendChild(a);
+    file.li.appendChild(a);
     // TODO - show bytes/sha?
   }
 }
