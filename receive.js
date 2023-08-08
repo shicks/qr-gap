@@ -10,6 +10,7 @@ const barcodeDetector = new BarcodeDetector({formats: ['qr_code']});
 // }
 const files = new Map/*<sha: string, File>*/();
 const filesDiv = document.querySelector('#files');
+const logDiv = document.querySelector('#log');
 
 function newFile(json) {
   const li = document.createElement('li');
@@ -196,6 +197,7 @@ function drawOverlay(barcodes) {
 
     try {
       const json = JSON.parse(barcode.rawValue);
+      log.textContent = barcode.rawValue;
       let file = files.get(json.sha);
       if (file) {
         updateFile(file, json);
