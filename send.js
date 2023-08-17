@@ -1,5 +1,5 @@
 // Send a file.
-// Usage: node send.js [-n 100] <filename>
+// Usage: node send.js [-w] [-n 100] <filename>
 
 const crypto = require('crypto');
 const fs = require('fs').promises;
@@ -14,9 +14,17 @@ function shasum(str) {
 async function main(args) {
   const files = [];
   let perChunk = 200;
+  let wait = false;
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === '-n') {
+    if (arg === '-w') {
+      wait = true;
+    } else if (arg.startsWith('-w')) {
+      wait = true;
+      args[i] = '-' + arg.substring(2);
+      i--;
+    } else if (arg === '-n') {
       perChunk = Number(args[++i]);
     } else if (arg.startsWith('-n')) {
       perChunk = Number(arg.substring(2));
@@ -55,6 +63,9 @@ async function main(args) {
     for (const c of chunks) {
       qrcode.generate(JSON.stringify(c));
       console.log(`${c.sha}: ${c.i + 1} of ${c.n}\n\n`);
+      if (wait) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
   }
 }
